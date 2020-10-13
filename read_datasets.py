@@ -2,13 +2,14 @@ from scipy.io import arff
 from sklearn.cluster import DBSCAN
 import numpy as np
 from sklearn import preprocessing
+from CompareDBSCAN import compareDBSCAN
 zoo_data, zoo_meta = arff.loadarff('./datasets/zoo.arff')
 waveform_data, waveform_meta = arff.loadarff('./datasets/waveform.arff')
 cn4_data, cn4_meta = arff.loadarff('./datasets/connect-4.arff')
 
 zoo_encoder = preprocessing.LabelEncoder()
 zoo_encoder.fit([b'true', b'false'])
-
+ohe = preprocessing.OneHotEncoder()
 
 zoo_p_data = np.zeros([len(zoo_data), len(zoo_data[0])])
 
@@ -22,9 +23,6 @@ for i in range(len(zoo_data)):
 
 zoo_final_data = zoo_p_data[:, 1:-1]
 
-clustering = DBSCAN(eps=3, min_samples=2).fit(zoo_final_data)
-
-
 waveform_final_data = np.zeros([len(waveform_data), len(waveform_data[0])-1])
 
 for i in range(len(waveform_data)):
@@ -36,9 +34,7 @@ cn4_encoder.fit([b'x', b'b', b'o'])
 
 cn4_proc_data = []
 [cn4_proc_data.append(cn4_encoder.transform(x.tolist()[0:-1])) for x in cn4_data]
-print(np.array(cn4_proc_data))
 
-#cn4_proc_data = np.zeros([len(cn4_data), len(cn4_data[0])-1])
-#for i in range(len(cn4_data)):
-#    for j in range(len(cn4_data[0])-1):
-#         cn4_proc_data[i,j] = cn4_encoder.transform([cn4_data[i][j]])[0]
+compareDBSCAN(cn4_proc_data)
+compareDBSCAN(waveform_final_data)
+compareDBSCAN(zoo_final_data)
