@@ -2,7 +2,7 @@ from scipy.io import arff
 from sklearn.cluster import DBSCAN
 import numpy as np
 from sklearn import preprocessing
-from CompareDBSCAN import compareDBSCAN
+from CompareDBSCAN import compareDBSCAN_alg, compareDBSCAN_metric
 zoo_data, zoo_meta = arff.loadarff('./datasets/zoo.arff')
 waveform_data, waveform_meta = arff.loadarff('./datasets/waveform.arff')
 cn4_data, cn4_meta = arff.loadarff('./datasets/connect-4.arff')
@@ -18,7 +18,7 @@ for i in range(len(zoo_data)):
          zoo_p_data[i,j] = zoo_encoder.transform([zoo_data[i][j]])[0]
     # We have to scale this range to [0,1] but I don't understand the method xd
     zoo_p_data[i, 13] = zoo_data[i][13]
-    for j in range(14,17):
+    for j in range(14, 17):
          zoo_p_data[i,j] = zoo_encoder.transform([zoo_data[i][j]])[0]
 
 zoo_final_data = zoo_p_data[:, 1:-1]
@@ -34,7 +34,3 @@ cn4_encoder.fit([b'x', b'b', b'o'])
 
 cn4_proc_data = []
 [cn4_proc_data.append(cn4_encoder.transform(x.tolist()[0:-1])) for x in cn4_data]
-
-compareDBSCAN(cn4_proc_data)
-compareDBSCAN(waveform_final_data)
-compareDBSCAN(zoo_final_data)
