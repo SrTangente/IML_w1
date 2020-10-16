@@ -3,37 +3,50 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-def compareDBSCAN_alg(data):
-    ball_tree_clustering = DBSCAN(algorithm='ball_tree').fit(data)
+def compareDBSCAN_alg(data, eps):
+    data = StandardScaler().fit_transform(data)
+    auto_clustering = DBSCAN(eps=eps, algorithm='auto').fit(data)
+    print('Auto:')
+    print(auto_clustering.labels_)
+    plot_result(auto_clustering, data)
+    ball_tree_clustering = DBSCAN(algorithm='ball_tree', eps=eps).fit(data)
     print('Ball tree:')
-    plot_result(ball_tree_clustering, data)
     print(ball_tree_clustering.labels_)
-    kd_tree_clustering = DBSCAN(algorithm='kd_tree').fit(data)
+    plot_result(ball_tree_clustering, data)
+    kd_tree_clustering = DBSCAN(algorithm='kd_tree', eps=eps).fit(data)
     print('KD tree:')
     print(kd_tree_clustering.labels_)
+    plot_result(kd_tree_clustering, data)
     try:
-        brute_clustering = DBSCAN(algorithm='brute').fit(data)
+        brute_clustering = DBSCAN(algorithm='brute', eps=eps, metric='cosine').fit(data)
         print('Brute:')
         print(brute_clustering.labels_)
+        plot_result(brute_clustering, data)
     except:
         print("Brute clustering could not be performed (too may data)")
 
-def compareDBSCAN_metric(data):
-    euclidean_clustering = DBSCAN(metric='euclidean').fit(data)
+def compareDBSCAN_metric(data, eps):
+    data = StandardScaler().fit_transform(data)
+    euclidean_clustering = DBSCAN(metric='euclidean', eps=eps).fit(data)
     print('Euclidean:')
     print(euclidean_clustering.labels_)
-    cosine_clustering = DBSCAN(metric='cosine').fit(data)
+    plot_result(euclidean_clustering, data)
+    cosine_clustering = DBSCAN(metric='cosine', eps=eps).fit(data)
     print('Cosine:')
     print(cosine_clustering.labels_)
-    l1_clustering = DBSCAN(metric='l1').fit(data)
+    plot_result(cosine_clustering, data)
+    l1_clustering = DBSCAN(metric='l1', eps=eps).fit(data)
     print('L1:')
     print(l1_clustering.labels_)
-    l2_clustering = DBSCAN(metric='l2').fit(data)
+    plot_result(cosine_clustering, data)
+    l2_clustering = DBSCAN(metric='l2', eps=eps).fit(data)
     print('L2:')
     print(l2_clustering.labels_)
-    man_clustering = DBSCAN(metric='Manhattan').fit(data)
+    plot_result(cosine_clustering, data)
+    man_clustering = DBSCAN(metric='manhattan', eps=eps).fit(data)
     print('Manhattan:')
     print(man_clustering.labels_)
+    plot_result(cosine_clustering, data)
 
 
 def plot_result(db, data):
