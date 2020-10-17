@@ -11,7 +11,9 @@ def kmeans(data, k):
     seeds = []
     for l in range(k):
         r = np.random.randint(0, n)
-        seeds.append(data[r, :])
+        new_seed = data[r, :]
+        if new_seed not in seeds:
+            seeds.append(new_seed)
         tagged_data[r, -1] = l
     return kmeans_core(tagged_data, seeds)
 
@@ -27,7 +29,7 @@ def kmeans_core(tagged_data, seeds):
             min_distance = None
             for j in range(len(seeds)):
                 # calculate distance for each centroid
-                distance = np.linalg.norm(seeds[j] - tagged_data[i, :-1], ord=n_prop)
+                distance = np.linalg.norm(seeds[j] - tagged_data[i, :-1], ord=2)
                 if min_distance is None or distance < min_distance:
                     min_distance = distance
                     tag = j
