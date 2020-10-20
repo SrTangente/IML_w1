@@ -17,9 +17,6 @@ adult_df = pd.get_dummies(adult_df)
 waveform_df = pd.DataFrame(waveform_data)
 waveform_df = waveform_df.drop("class",axis=1)
 
-cn4_encoder = preprocessing.LabelEncoder()
-cn4_encoder.fit_transform([b'x', b'b', b'o'])
-
-cn4_proc_data = []
-[cn4_proc_data.append(cn4_encoder.transform(x.tolist()[0:-1])) for x in cn4_data]
-cn4_proc_data = [[cell-1 for cell in row] for row in cn4_proc_data]
+cn4_df = pd.DataFrame(cn4_data)
+cn4_df = cn4_df.drop("class",axis=1)
+cn4_df = pd.get_dummies(cn4_df)
