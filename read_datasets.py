@@ -14,6 +14,10 @@ adult_df = pd.DataFrame(adult_data)
 adult_df = adult_df.drop("class",axis=1)
 # Replace missing values
 adult_df = adult_df.replace(b"?",np.nan)
+# Handle missing values (for now, just delete the row with the missing value)
+# The index can be reset after dropna() by calling reset_index(drop=True)
+# The index reset is omitted for now in order not to lose track of the missing values dropped
+adult_df.dropna()
 # One-hot encoding the categorical attributes
 adult_df = pd.get_dummies(adult_df)
 # Normalize the data
