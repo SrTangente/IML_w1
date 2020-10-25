@@ -12,7 +12,8 @@ def kmeans(data, k):
     for l in range(k):
         r = np.random.randint(0, n)
         new_seed = data[r, :]
-        if new_seed not in seeds:
+        ids = map(id, seeds)
+        if id(new_seed) not in ids:
             seeds.append(new_seed)
         tagged_data[r, -1] = l
     return kmeans_core(tagged_data, seeds)
