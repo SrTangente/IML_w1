@@ -15,3 +15,11 @@ def evaluate_clustering(clustering, classes):
     print('Davies-Bouldin score: ', dbs)
     print('Internal metrics')
     print('Silhouette score: ', ss)
+
+def evaluate_DBSCAN(db_labels,data, classes):
+    ars = metrics.adjusted_rand_score(classes, db_labels)
+    fms = metrics.fowlkes_mallows_score(classes, db_labels)
+
+    print('External metrics')
+    print('Adjusted rand score: ', ars)
+    print('Fowlkes-Mallows score: ', fms)
