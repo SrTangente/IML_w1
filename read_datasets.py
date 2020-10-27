@@ -1,36 +1,59 @@
 from scipy.io import arff
-from sklearn.cluster import DBSCAN
 import numpy as np
+import pandas as pd
 from sklearn import preprocessing
-from CompareDBSCAN import compareDBSCAN_alg, compareDBSCAN_metric
-zoo_data, zoo_meta = arff.loadarff('./datasets/zoo.arff')
-waveform_data, waveform_meta = arff.loadarff('./datasets/waveform.arff')
-cn4_data, cn4_meta = arff.loadarff('./datasets/connect-4.arff')
+from sklearn.preprocessing import LabelEncoder
 
-zoo_encoder = preprocessing.LabelEncoder()
-zoo_encoder.fit([b'true', b'false'])
-ohe = preprocessing.OneHotEncoder()
 
-zoo_p_data = np.zeros([len(zoo_data), len(zoo_data[0])])
+def read_waveform():
+    waveform_data, waveform_meta = arff.loadarff('./datasets/waveform.arff')
+    waveform_df = pd.DataFrame(waveform_data)
+    # Drop 'class' attribute from the training, as we are using unsupervised learning
+    classes = waveform_df["class"]
+    waveform_df = waveform_df.drop("class", axis=1)
+    # No missing values, no step needed
+    # Normalize the data
+    scaler = preprocessing.MinMaxScaler()
+    waveform_df_scaled = scaler.fit_transform(waveform_df.values)
+    waveform_df = pd.DataFrame(waveform_df_scaled)
+    return waveform_df.to_numpy(), classes.to_numpy(dtype=np.float)
 
-for i in range(len(zoo_data)):
-    for j in range(1,13):
-         zoo_p_data[i,j] = zoo_encoder.transform([zoo_data[i][j]])[0]
-    # We have to scale this range to [0,1] but I don't understand the method xd
-    zoo_p_data[i, 13] = zoo_data[i][13]
-    for j in range(14, 17):
-         zoo_p_data[i,j] = zoo_encoder.transform([zoo_data[i][j]])[0]
 
-zoo_final_data = zoo_p_data[:, 1:-1]
+def read_adult():
+    adult_data, adult_meta = arff.loadarff('./datasets/adult.arff')
+    adult_df = pd.DataFrame(adult_data)
+    # Replace missing values
+    adult_df = adult_df.replace(b"?", np.nan)
+    # Handle missing values (for now, just delete the row with the missing value)
+    # The index can be reset after dropna() by calling reset_index(drop=True)
+    # The index reset is omitted for now in order not to lose track of the missing values dropped
+    adult_df = adult_df.dropna()
+    # Drop 'class' attribute from the training, as we are using unsupervised learning
+    classes = adult_df["class"]
+    adult_df = adult_df.drop("class", axis=1)
+    # Encode classes [b'<=50K', b'>50K'] to numbers
+    enc = LabelEncoder()
+    classes = enc.fit_transform(classes).astype(float)
+    # One-hot encoding the categorical attributes
+    adult_df = pd.get_dummies(adult_df)
+    # Normalize the data
+    scaler = preprocessing.MinMaxScaler()
+    adult_df_scaled = scaler.fit_transform(adult_df.values)
+    adult_df = pd.DataFrame(adult_df_scaled)
+    return adult_df.to_numpy(), classes.to_numpy(dtype=np.float)
 
-waveform_final_data = np.zeros([len(waveform_data), len(waveform_data[0])-1])
 
-for i in range(len(waveform_data)):
-    for j in range(len(waveform_data[0])-1):
-        waveform_final_data[i,j] = waveform_data[i][j]
-
-cn4_encoder = preprocessing.LabelEncoder()
-cn4_encoder.fit([b'x', b'b', b'o'])
-
-cn4_proc_data = []
-[cn4_proc_data.append(cn4_encoder.transform(x.tolist()[0:-1])) for x in cn4_data]
+def read_cn4():
+    cn4_data, cn4_meta = arff.loadarff('./datasets/connect-4.arff')
+    cn4_df = pd.DataFrame(cn4_data)
+    # Drop 'class' attribute from the training, as we are using unsupervised learning
+    classes = cn4_df["class"]
+    cn4_df = cn4_df.drop("class", axis=1)
+    # Encode classes [b'draw', b'loss', b'win'] to numbers
+    enc = LabelEncoder()
+    classes = enc.fit_transform(classes).astype(float)
+    # No missing values, no step needed
+    # One-hot encoding the categorical attributes
+    cn4_df = pd.get_dummies(cn4_df)
+    # We do not need to normalize the data since all values are zeroes and ones
+    return cn4_df.to_numpy(), classes
