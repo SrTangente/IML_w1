@@ -1,4 +1,5 @@
 from sklearn import metrics
+import numpy as np
 
 
 def evaluate_clustering(clustering, classes):
@@ -6,8 +7,8 @@ def evaluate_clustering(clustering, classes):
     ars = metrics.adjusted_rand_score(classes, labels)
     fms = metrics.fowlkes_mallows_score(classes, labels)
 
-    dbs = metrics.davies_bouldin_score(clustering, labels)
-    ss = metrics.silhouette_score(clustering, labels)
+    dbs = metrics.davies_bouldin_score(clustering[:, :-1], labels)
+    ss = metrics.silhouette_score(clustering[:, :-1], labels)
 
     print('External metrics')
     print('Adjusted rand score: ', ars)
@@ -16,9 +17,12 @@ def evaluate_clustering(clustering, classes):
     print('Davies-Bouldin score: ', dbs)
     print('Silhouette score: ', ss)
 
-def evaluate_DBSCAN(db_labels,data, classes):
-    ars = metrics.adjusted_rand_score(classes, db_labels)
-    fms = metrics.fowlkes_mallows_score(classes, db_labels)
+def evaluate_DBSCAN(db_labels, data, classes):
+    print(classes)
+    labels = np.array(db_labels)
+    print(labels)
+    ars = metrics.adjusted_rand_score(classes, labels)
+    fms = metrics.fowlkes_mallows_score(classes, labels)
 
     print('External metrics')
     print('Adjusted rand score: ', ars)
