@@ -1,10 +1,9 @@
 import numpy as np
-from numpy.core._multiarray_umath import ndarray
-
 from k_means import kmeans
 from read_datasets import read_waveform, read_adult, read_cn4
 from evaluate import evaluate_clustering
 from sklearn.metrics import euclidean_distances
+
 
 def bisecting_kmeans(data, k):
     """
@@ -18,19 +17,20 @@ def bisecting_kmeans(data, k):
     n_prop = np.size(data, 1)
     tagged_data = np.zeros([n, n_prop + 1])
     tagged_data[:, :-1] = data
+
+    # In the first iteration, split the only existing cluster
+    cluster_to_split = 0.0
     # Divide one cluster in two. Repeat it 'k-1' times to get k clusters
     for i in range(k - 1):
-        # Select the cluster to split (for now, the largest)
-        # Note: it is necessary to cast the values to int to call the numpy.bincount()
-        # so we need to cast the values back to float once it returns
-        cluster_to_split = np.bincount(tagged_data[:, -1].astype(int)).argmax().astype(float)
+
         # Select the data to split (without the class associated)
         data_to_split = tagged_data[tagged_data[:, -1] == cluster_to_split][:, :-1]
         # Split the cluster using k-means (bisecting step)
-        new_tags = kmeans(data_to_split, 2)[:, -1]
+        new_tagged_data, centroids = kmeans(data_to_split, 2, return_centroids=True)
+        new_tags = new_tagged_data[:, -1]
         # The returning values of kmeans with class '0' will keep its original cluster number
         # and the ones with class '1' will get the tag corresponding to the current iteration
-        new_tags = np.array([cluster_to_split if tag == 0. else float(i+1) for tag in new_tags])
+        new_tags = np.array([cluster_to_split if tag == 0. else float(i + 1) for tag in new_tags])
         # Update the tags from the tagged_data
         sel = tagged_data[:, -1] == cluster_to_split
         rows_affected = tagged_data[sel]
@@ -38,4 +38,21 @@ def bisecting_kmeans(data, k):
         tagged_data[sel] = rows_affected
         print(tagged_data[:, -1])
         print(np.bincount(tagged_data[:, -1].astype(int)))
+
+        # Select the cluster to split for the next iteration (the most heterogeneous)
+        max_distance = 0.0
+        cluster_to_split = 0.0
+        for num_cluster in range(i + 1):
+            cluster = tagged_data[tagged_data[:, -1] == float(num_cluster)][:, :-1]
+            mean_distance = float(sum(euclidean_distances(cluster, centroids[num_cluster].reshape(1, -1)))) / float(
+                cluster.shape[0])
+            if mean_distance > max_distance:
+                cluster_to_split = float(num_cluster)
+                max_distance = mean_distance
+
     return tagged_data
+
+
+data, classes = read_adult()
+tagged_data = bisecting_kmeans(data, 2)
+evaluate_clustering(tagged_data, classes)
