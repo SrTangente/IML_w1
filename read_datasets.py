@@ -40,7 +40,7 @@ def read_adult():
     scaler = preprocessing.MinMaxScaler()
     adult_df_scaled = scaler.fit_transform(adult_df.values)
     adult_df = pd.DataFrame(adult_df_scaled)
-    return adult_df.to_numpy(), classes.to_numpy(dtype=np.float)
+    return adult_df.to_numpy(), classes
 
 
 def read_cn4():
