@@ -39,8 +39,3 @@ def bisecting_kmeans(data, k):
         print(tagged_data[:, -1])
         print(np.bincount(tagged_data[:, -1].astype(int)))
     return tagged_data
-
-
-data, classes = read_cn4()
-tagged_data = bisecting_kmeans(data, 3)
-evaluate_clustering(tagged_data, classes)
