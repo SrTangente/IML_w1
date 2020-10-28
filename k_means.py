@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def kmeans(data, k):
+def kmeans(data, k, return_centroids=False):
     n = np.size(data, 0)
     n_prop = np.size(data, 1)
     tagged_data = np.ones([n, n_prop + 1])
@@ -16,10 +16,10 @@ def kmeans(data, k):
         if id(new_seed) not in ids:
             seeds.append(new_seed)
         tagged_data[r, -1] = l
-    return kmeans_core(tagged_data, seeds)
+    return kmeans_core(tagged_data, seeds, return_centroids)
 
 
-def kmeans_core(tagged_data, seeds):
+def kmeans_core(tagged_data, seeds, return_centroids=False):
     n = np.size(tagged_data, 0)
     n_prop = np.size(tagged_data, 1) - 1
     # save tags state
@@ -39,7 +39,10 @@ def kmeans_core(tagged_data, seeds):
         new_tags = tagged_data[:, -1]
         if (new_tags == tags).all():
             # if tags have not changed since last iteration, we are done
-            return tagged_data
+            if return_centroids:
+                return tagged_data, seeds
+            else:
+                return tagged_data
         else:
             # if not, centroids are recalculated and tags updated
             tags = np.copy(new_tags)
