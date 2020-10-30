@@ -51,8 +51,3 @@ def bisecting_kmeans(data, k):
                 max_distance = mean_distance
 
     return tagged_data
-
-
-data, classes = read_adult()
-tagged_data = bisecting_kmeans(data, 2)
-evaluate_clustering(tagged_data, classes)
