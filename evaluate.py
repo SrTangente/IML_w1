@@ -22,9 +22,9 @@ def evaluate_clustering(clustering, classes):
 
 
 def evaluate_external(data, classes, algorithm):
-    k_values = [2,3]
-    ars_values = np.zeros([9])
-    fms_values = np.zeros([9])
+    k_values = [2, 3]
+    ars_values = np.zeros([2])
+    fms_values = np.zeros([2])
     for i in range(len(k_values)):
         k = k_values[i]
         print(f"Computing for k={k}")
