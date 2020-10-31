@@ -18,6 +18,8 @@ def bisecting_kmeans(data, k):
     tagged_data = np.zeros([n, n_prop + 1])
     tagged_data[:, :-1] = data
 
+    centroids = [0]
+
     # In the first iteration, split the only existing cluster
     cluster_to_split = 0.0
     # Divide one cluster in two. Repeat it 'k-1' times to get k clusters
@@ -26,7 +28,9 @@ def bisecting_kmeans(data, k):
         # Select the data to split (without the class associated)
         data_to_split = tagged_data[tagged_data[:, -1] == cluster_to_split][:, :-1]
         # Split the cluster using k-means (bisecting step)
-        new_tagged_data, centroids = kmeans(data_to_split, 2, return_centroids=True)
+        new_tagged_data, new_centroids = kmeans(data_to_split, 2, return_centroids=True)
+        centroids[int(cluster_to_split)] = new_centroids[0]
+        centroids.append(new_centroids[1])
         new_tags = new_tagged_data[:, -1]
         # The returning values of kmeans with class '0' will keep its original cluster number
         # and the ones with class '1' will get the tag corresponding to the current iteration
