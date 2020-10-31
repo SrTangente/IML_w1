@@ -7,4 +7,5 @@ data, classes = read_adult()
 #data, classes = read_waveform()
 #data, classes = read_cn4()
 
-compareDBSCAN_metric(data, classes, 0.15, np.log(len(data)))
+compareDBSCAN_metric(data, classes, 0.09, np.log(len(data)))
+compareDBSCAN_alg(data, classes, 0.09, np.log(len(data)))
