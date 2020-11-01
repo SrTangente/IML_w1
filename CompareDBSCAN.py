@@ -24,7 +24,6 @@ def compareDBSCAN_alg(data, classes, eps, minPts):
 
 def compareDBSCAN_metric(data, classes, eps, minPts):
     data = StandardScaler().fit_transform(data)
-    clusters_num = np.ones([5])*-1
     euclidean_clustering = DBSCAN(metric='euclidean', eps=eps, min_samples=minPts).fit(data)
     print('Euclidean:')
     evaluate_DBSCAN(euclidean_clustering.labels_, data, classes)
@@ -34,12 +33,6 @@ def compareDBSCAN_metric(data, classes, eps, minPts):
         evaluate_DBSCAN(cosine_clustering.labels_, data, classes)
     except:
         print("Cosine clustering could not be performed (too may data)")
-    l1_clustering = DBSCAN(metric='l1', eps=eps, min_samples=minPts).fit(data)
-    print('L1:')
-    evaluate_DBSCAN(l1_clustering.labels_, data, classes)
-    l2_clustering = DBSCAN(metric='l2', eps=eps, min_samples=minPts).fit(data)
-    print('L2:')
-    evaluate_DBSCAN(l2_clustering.labels_, data, classes)
     man_clustering = DBSCAN(metric='manhattan', eps=eps, min_samples=minPts).fit(data)
     print('Manhattan:')
     evaluate_DBSCAN(man_clustering.labels_, data, classes)
