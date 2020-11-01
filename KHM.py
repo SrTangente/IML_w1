@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import norm
 
 
-def KHM(dataset, k, p, it, tol, crisp=True):
+def KHM(dataset, k, p, it=100, tol=10e-12, crisp=True):
     '''
     Inputs:
         dataset: numpy array of (sample,feature)
@@ -26,11 +26,12 @@ def KHM(dataset, k, p, it, tol, crisp=True):
     # Init performance value to infty
     perf_0 = np.infty
 
-
+    # Stack dataset k times to vectorize difference norm calculations
+    stacked = np.stack([dataset] * k, axis=1)
     for i in range(it):
         print(f'Iteration {i}')
-        #Get difference norms of each sample to each centroid
-        stacked = np.stack([dataset] * k, axis=1)
+
+        #Take norms, take eps if zero to avoid singularities
         norms = np.maximum(norm(stacked - c_0, p, axis=2), np.finfo(float).eps)
 
         #Get membership and weight values
@@ -42,7 +43,7 @@ def KHM(dataset, k, p, it, tol, crisp=True):
             np.sum(m * np.expand_dims(w, axis=1), axis=0), axis=1)
 
         #Get new performance value
-        perf = np.sum(k / np.sum(1 / norm(stacked - c_0, p,axis=1) ** p), axis=0)
+        perf = np.sum(k / np.sum(1 / norm(np.maximum(stacked - c_0, np.finfo(float).eps), p,axis=1) ** p), axis=0)
 
         #Break if performance does not improve enough
         if perf_0 - perf < tol:
@@ -51,6 +52,6 @@ def KHM(dataset, k, p, it, tol, crisp=True):
         perf_0 = perf.copy()
         c_0 = c.copy()
     if not crisp:
-        return c, m
+        return np.concatenate([dataset, m],axis=1)
     else:
-        return c, np.argmax(m, axis=1)
+        return np.concatenate([dataset, np.reshape(np.argmax(m, axis=1),[n_samples,1])],axis=1)
