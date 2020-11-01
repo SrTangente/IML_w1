@@ -63,19 +63,20 @@ def evaluate_internal(data, algorithm):
 def evaluate_DBSCAN(db_labels, data, classes):
     labels = np.array(db_labels)
     print("Number of labels: ", np.max(labels, 0))
+    if np.max(labels) != -1:
+        ars = metrics.adjusted_rand_score(classes, labels)
+        fms = metrics.fowlkes_mallows_score(classes, labels)
+        sil = metrics.silhouette_score(data, labels)
+        dbs = metrics.davies_bouldin_score(data, labels)
+        chs = metrics.calinski_harabasz_score(data, labels)
 
-    ars = metrics.adjusted_rand_score(classes, labels)
-    fms = metrics.fowlkes_mallows_score(classes, labels)
-    sil = metrics.silhouette_score(data, labels)
-    dbs = metrics.davies_bouldin_score(data, labels)
-    chs = metrics.calinski_harabasz_score(data, labels)
-
-    print('Internal metrics')
-    print('Silhouette score: ', sil)
-    print('Davies-Bouldin score: ', dbs)
-    print('Calinski-Harabasz score: ', chs)
-    print('---------------')
-    print('External metrics')
-    print('Adjusted rand score: ', ars)
-    print('Fowlkes-Mallows score: ', fms)
-
+        print('Internal metrics')
+        print('Silhouette score: ', sil)
+        print('Davies-Bouldin score: ', dbs)
+        print('Calinski-Harabasz score: ', chs)
+        print('---------------')
+        print('External metrics')
+        print('Adjusted rand score: ', ars)
+        print('Fowlkes-Mallows score: ', fms)
+    else:
+        print('No se ha encontrado ningún cluster')
