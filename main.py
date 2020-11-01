@@ -2,8 +2,13 @@ from read_datasets import read_cn4, read_adult, read_waveform
 from k_means import kmeans
 from bisecting_k_means import bisecting_kmeans
 from KHM import KHM
+from FCM import FCM
 from evaluate import evaluate_clustering, evaluate_DBSCAN
 from CompareDBSCAN import compareDBSCAN_alg
+from sklearn.cluster import DBSCAN
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
 
 def input_dataset():
     print("Select dataset to which execute the unsupervised algorithms:")
@@ -56,33 +61,52 @@ def read_dataset(num_dataset):
     else:
         return read_cn4(), 3
 
-def evaluate_algorithm(num_algorithm, tagged_data, classes):
-    if num_algorithm == 1:
-        # TODO: this is provisional. Substitute for evaluate_DBSCAN() once
-        #  DBSCAN is available to be selected.
-        evaluate_clustering(tagged_data, classes)
-    else:
-        evaluate_clustering(tagged_data, classes)
 
-def execute_algorithm(num_algorithm, data, k):
+def execute_algorithm(num_dataset, num_algorithm):
+    """
+    Execute the selected algorithm on the selected dataset with the best parameters obtained
+    :param num_dataset: the number of the dataset selected
+    :param num_algorithm: the number of the dataset selected
+    :return: the tagged_data predicted and the real classes of the dataset
+    """
+    (data, classes), k = read_dataset(num_dataset)
+    print("Executing algorithm...")
+    print("This process can take some minutes")
     if num_algorithm == 1:
-        # TODO: this is provisional. Replace with the best DBSCAN obtained
-        return bisecting_kmeans(data, k)
+        data = StandardScaler().fit_transform(data)
+        if num_dataset == 1:
+            tags = (DBSCAN(eps=0.09, min_samples=np.log(len(data))).fit(data)).labels_
+        elif num_dataset == 2:
+            tags = (DBSCAN(eps=0.29, min_samples=np.log(len(data)), metric='cosine').fit(data)).labels_
+        else:
+            tags = (DBSCAN(eps=0.005, min_samples=np.log(len(data))).fit(data)).labels_
+        tagged_data = np.zeros((data.shape[0], data.shape[1] + 1))
+        tagged_data[:, :-1] = data
+        tagged_data[:, -1] = tags
     elif num_algorithm == 2:
-        return kmeans(data, k)
+        tagged_data = kmeans(data, k)
     elif num_algorithm == 3:
-        return bisecting_kmeans(data, k)
+        tagged_data = bisecting_kmeans(data, k)
     elif num_algorithm == 4:
-        # TODO: Call KHM with best parameters obtained
-        return KHM(data, k, 4, 100, 0.01)
+        if num_dataset == 1:
+            tagged_data = KHM(data, k, 3, 100, 10e-12)
+        elif num_dataset == 2:
+            tagged_data = KHM(data, k, 2, 100, 10e-12)
+        else:
+            tagged_data = KHM(data, k, 3, 100, 10e-12)
     else:
-        # TODO: Substitute for Fuzzy C-Means
-        return bisecting_kmeans(data, k)
+        if num_dataset == 1:
+            tagged_data = FCM(data, k, 3, 100, 10e-12)
+        elif num_dataset == 2:
+            tagged_data = FCM(data, k, 2, 100, 10e-12)
+        else:
+            tagged_data = FCM(data, k, 3, 100, 10e-12)
+    return tagged_data, classes
+
 
 if __name__ == "__main__":
 
     num_dataset = input_dataset()
     num_algorithm = input_algorithm()
-    (data, classes), k = read_dataset(num_dataset)
-    tagged_data = execute_algorithm(num_algorithm, data, k)
-    evaluate_algorithm(num_algorithm, tagged_data, classes)
+    tagged_data, classes = execute_algorithm(num_dataset, num_algorithm)
+    evaluate_clustering(tagged_data, classes)
