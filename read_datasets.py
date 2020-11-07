@@ -43,6 +43,26 @@ def read_adult():
     return adult_df.to_numpy(), classes
 
 
+def read_vowel():
+    vowel_data, vowel_meta = arff.loadarff('./datasets/adult.arff')
+    vowel_df = pd.DataFrame(vowel_data)
+    # Drop 'class' attribute from the training, as we are using unsupervised learning
+    classes = vowel_df["class"]
+    vowel_df = vowel_df.drop("class", axis=1)
+    # Drop "train or test" and "speaker" columns
+    vowel_df = vowel_df.drop("Train_or_Test", axis=1)
+    vowel_df = vowel_df.drop("Speaker_Number", axis=1)
+    # Encode classes to numbers
+    enc = LabelEncoder()
+    classes = enc.fit_transform(classes).astype(float)
+    # One-hot encoding the categorical attributes
+    vowel_df = pd.get_dummies(vowel_df)
+    # Normalize the data
+    scaler = preprocessing.MinMaxScaler()
+    vowel_df_scaled = scaler.fit_transform(vowel_df.values)
+    vowel_df = pd.DataFrame(vowel_df_scaled)
+    return vowel_df.to_numpy(), classes
+
 def read_cn4():
     cn4_data, cn4_meta = arff.loadarff('./datasets/connect-4.arff')
     cn4_df = pd.DataFrame(cn4_data)
