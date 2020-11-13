@@ -44,11 +44,11 @@ def read_adult():
 
 
 def read_vowel():
-    vowel_data, vowel_meta = arff.loadarff('./datasets/adult.arff')
+    vowel_data, vowel_meta = arff.loadarff('./datasets/vowel.arff')
     vowel_df = pd.DataFrame(vowel_data)
     # Drop 'class' attribute from the training, as we are using unsupervised learning
-    classes = vowel_df["class"]
-    vowel_df = vowel_df.drop("class", axis=1)
+    classes = vowel_df["Class"]
+    vowel_df = vowel_df.drop("Class", axis=1)
     # Drop "train or test" and "speaker" columns
     vowel_df = vowel_df.drop("Train_or_Test", axis=1)
     vowel_df = vowel_df.drop("Speaker_Number", axis=1)
