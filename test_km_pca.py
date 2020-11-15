@@ -1,19 +1,17 @@
 from k_means import kmeans
 import read_datasets
-from evaluate import evaluate_external, evaluate_internal
+import evaluate
 from sklearn.cluster import k_means
 from sklearn import metrics
 from sklearn import decomposition
 
-data, classes = read_datasets.read_vowel()
-#data, classes = read_datasets.read_cn4()
-#data, classes = read_datasets.read_adult()
 
-print(data.shape[1])
+#data, classes = read_datasets.read_vowel()
+#data, classes = read_datasets.read_waveform()
+data, classes = read_datasets.read_adult()
 
-values = []
 
-for p in values:
-    pca = decomposition.PCA(n_components=p)
-    data = pca.fit_transform(data)
-    evaluate_internal(data, kmeans)
+k_values = [2, 3]
+p_values = [0, 10, 5, 2]
+
+evaluate.evaluate_scatter(data, classes, kmeans, k_values, p_values)
