@@ -1,10 +1,8 @@
-from k_means import kmeans
-import read_datasets
-import evaluate
-from sklearn import decomposition, manifold
 from matplotlib import pyplot as plt
-from pca import pca
+from sklearn import manifold
 
+from k_means import kmeans
+from pca import pca
 
 
 def visualize_km(data, classes, k=3, num_components=5, perplexity=30, alpha=0.5):

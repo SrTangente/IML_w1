@@ -1,10 +1,11 @@
 import time
 
-from sklearn import metrics
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn import decomposition
+from sklearn import metrics
+
 from pca import pca
+
 
 def evaluate_clustering(clustering, classes):
     labels = clustering[:, -1]

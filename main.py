@@ -1,13 +1,6 @@
-from read_datasets import read_cn4, read_adult, read_waveform, read_vowel
+from evaluate import evaluate_scatter
 from k_means import kmeans
-from bisecting_k_means import bisecting_kmeans
-from KHM import KHM
-from FCM import FCM
-from evaluate import evaluate_clustering, evaluate_DBSCAN, evaluate_scatter
-from CompareDBSCAN import compareDBSCAN_alg
-from sklearn.cluster import DBSCAN
-import numpy as np
-from sklearn.preprocessing import StandardScaler
+from read_datasets import read_adult, read_waveform, read_vowel
 from visualize_km_pca_tsne import visualize_km
 
 
