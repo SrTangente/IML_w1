@@ -91,7 +91,7 @@ def evaluate_scatter(data, labels, algorithm, k_values, p_values):
             dbs_values[j, i] = metrics.davies_bouldin_score(data, clustering[:, -1])
             chs_values[j, i] = metrics.calinski_harabasz_score(data, clustering[:, -1])
             print(f'Evaluation time:{time.time() - alg_time}')
-            data = np.copy(original_data)
+        data = np.copy(original_data)
     print('Adjusted rand index values: ')
     print(ars_values)
     print('Fowlkes-Mallows values: ')
