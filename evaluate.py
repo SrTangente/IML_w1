@@ -4,7 +4,7 @@ from sklearn import metrics
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import decomposition
-
+from pca import pca
 
 def evaluate_clustering(clustering, classes):
     labels = clustering[:, -1]
@@ -71,13 +71,13 @@ def evaluate_scatter(data, labels, algorithm, k_values, p_values):
     dbs_values = np.copy(ars_values)
     chs_values = np.copy(ars_values)
     original_data = np.copy(data)
+    transformed_data = pca(data)
     for i in range(len(p_values)):
         p = p_values[i]
-        if p != 0:
-            pca = decomposition.PCA(n_components=p)
-            pca.fit(data)
-            print('Variances: ', sorted(pca.explained_variance_, reverse=True))
-            data = pca.transform(data)
+        if p == 0:
+            data = original_data
+        else:
+            data = transformed_data[:, :p]
         for j in range(len(k_values)):
             start = time.time()
             k = k_values[j]
@@ -91,7 +91,6 @@ def evaluate_scatter(data, labels, algorithm, k_values, p_values):
             dbs_values[j, i] = metrics.davies_bouldin_score(data, clustering[:, -1])
             chs_values[j, i] = metrics.calinski_harabasz_score(data, clustering[:, -1])
             print(f'Evaluation time:{time.time() - alg_time}')
-        data = np.copy(original_data)
     print('Adjusted rand index values: ')
     print(ars_values)
     print('Fowlkes-Mallows values: ')

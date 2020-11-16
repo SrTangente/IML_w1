@@ -13,6 +13,6 @@ data, classes = read_datasets.read_waveform()
 np.random.seed(3456)
 
 k_values = [2, 3, 4]
-p_values = [30]
+p_values = [0, 20, 10, 2]
 
 evaluate.evaluate_scatter(data, classes, kmeans, k_values, p_values)
